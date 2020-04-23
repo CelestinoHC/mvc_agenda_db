@@ -1,0 +1,4 @@
+user:jchc
+password:SqL2797
+host:localhost
+database:agenda_db
