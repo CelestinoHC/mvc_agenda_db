@@ -78,9 +78,10 @@ class View:
         print('2. Leer contacto')
         print('3. Leer todos los contactos')
         print('4. Leer contactos de un CP')
-        print('5. Actualizar contacto')
-        print('6. Borrar contacto')
-        print('7. Regresar')
+        print('5. Leer contactos de una ciudad')
+        print('6. Actualizar contacto')
+        print('7. Borrar contacto')
+        print('8. Regresar')
 
     def show_a_contact(self, record):
         print('ID: ', record[0])
@@ -137,7 +138,7 @@ class View:
         print('Fecha de la cita: ', record[4])
         print('Hora de la cita: ', record[5])
         print('Datos del contacto: '.center(81,'*'))
-        self.show_a_contact_brief(record[5:])
+        self.show_a_contact_brief(record[6:])
 
     def show_appointment_header(self, header):
         print(header.center(81,'+'))

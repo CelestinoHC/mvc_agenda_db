@@ -9,7 +9,7 @@ class Controller:
 
     def start(self):
         self.view.start()
-        self.view.main_menu()
+        self.main_menu()
 
     """General Controllers"""
 
@@ -45,7 +45,7 @@ class Controller:
     def zips_menu(self):
         o = '0'
         while o != '7':
-            self.view.main_menu()
+            self.view.zips_menu()
             self.view.option('7')
             o = input()
             if o == '1':
@@ -174,7 +174,7 @@ class Controller:
     def contacts_menu(self):
         o = '0'
         while o != '7':
-            self.view.main_menu()
+            self.view.contacts_menu()
             self.view.option('7')
             o = input()
             if o == '1':
@@ -186,10 +186,12 @@ class Controller:
             elif o == '4':
                 self.read_contacts_zip()
             elif o == '5':
-                self.update_contact()
+                self.read_contacts_city()
             elif o == '6':
-                self.delete_contact()
+                self.update_contact()
             elif o == '7':
+                self.delete_contact()
+            elif o == '8':
                 return
             else:
                 self.view.not_valid_option()
@@ -259,8 +261,22 @@ class Controller:
         self.view.ask('CP: ')
         zip = input()
         contacts = self.model.read_contacts_zip(zip)
-        if type(contacts) == tuple:
-            self.view.show_contact_header(' contactos en el CP '+zip+' ')
+        if type(contacts) == list:
+            self.view.show_contact_header(' Contactos en el CP '+zip+' ')
+            for contact in contacts:
+                self.view.show_a_contact(contact)
+                self.view.show_contact_midder()
+            self.view.show_contact_footer()
+        else:
+            self.view.error('Problema al leer los contactos. Verifica.')
+        return
+
+    def read_contacts_city(self):
+        self.view.ask('Ciudad: ')
+        city = input()
+        contacts = self.model.read_contacts_city(city)
+        if type(contacts) == list:
+            self.view.show_contact_header(' Contactos en '+city+' ')
             for contact in contacts:
                 self.view.show_a_contact(contact)
                 self.view.show_contact_midder()
@@ -286,7 +302,7 @@ class Controller:
             return
         self.view.msg('Ingresa los valores a modificar (vacio para dejarlo igual): ')
         whole_vals = self.ask_contact()
-        fields, vals = self.update_lists(['name', 'sname1', 'sname2', 'street', 'noext', 'noint', 'col', 'zip', 'email', 'phone'], whole_vals)
+        fields, vals = self.update_lists(['c_fname', 'c_sname1', 'c_sname2', 'c_street', 'c_noext', 'c_noint', 'c_col', 'c_zip', 'c_email', 'c_phone'], whole_vals)
         vals.append(id_contact)
         vals = tuple(vals)
         out = self.model.update_contact(fields, vals)
@@ -314,7 +330,7 @@ class Controller:
     def appointment_menu(self):
         o = '0'
         while o != '8':
-            self.view.main_menu()
+            self.view.appointment_menu()
             self.view.option('8')
             o = input()
             if o == '1':
@@ -343,10 +359,10 @@ class Controller:
         self.view.ask('Lugar de la cita: ')
         place = input()
         self.view.ask('Fecha de la cita: ')
-        daate = input()
+        date = input()
         self.view.ask('Hora de la cita: ')
         hour = input()
-        return [affair, place, daate, hour]
+        return [affair, place, date, hour]
 
     def create_appointment(self):
         self.view.ask('ID de contacto: ')
@@ -363,8 +379,8 @@ class Controller:
             else:
                 self.view.error('Problema al leer el contacto. Verifica.')
             return
-        affair, place, daate, hour = self.ask_appointment()
-        out = self.model.create_appointment(id_contact, affair, place, daate, hour)
+        affair, place, date, hour = self.ask_appointment()
+        out = self.model.create_appointment(id_contact, affair, place, date, hour)
         if out == True:
             self.view.ok(affair, 'agregó')
         else:
@@ -403,7 +419,7 @@ class Controller:
         self.view.ask('Lugar de la cita: ')
         place = input()
         appointments = self.model.read_appointments_place(place)
-        if type(appointments) == tuple:
+        if type(appointments) == list:
             self.view.show_appointment_header(' Citas en el lugar '+place+' ')
             for appointment in appointments:
                 self.view.show_appointment(appointment)
@@ -415,10 +431,10 @@ class Controller:
 
     def read_appointments_date(self):
         self.view.ask('Fecha de la cita: ')
-        daate = input()
-        appointments = self.model.read_appointments_date(daate)
-        if type(appointments) == tuple:
-            self.view.show_appointment_header(' Citas en la fecha '+daate+' ')
+        date = input()
+        appointments = self.model.read_appointments_date(date)
+        if type(appointments) == list:
+            self.view.show_appointment_header(' Citas en la fecha '+date+' ')
             for appointment in appointments:
                 self.view.show_appointment(appointment)
                 self.view.show_appointment_midder()
@@ -443,7 +459,17 @@ class Controller:
                 self.view.error('Problema al leer la cita. Verifica.')
             return
         self.view.msg('Ingresa los valores a modificar (vacio para dejarlo igual): ')
-        whole_vals = self.ask_appointment()
+        self.view.ask('ID de contacto: ')
+        id_contact = input()
+        self.view.ask('Asunto: ')
+        a_affair = input()
+        self.view.ask('Lugar: ')
+        a_place = input()
+        self.view.ask('Fecha(yyyy-mm-dd): ')
+        a_date = input()
+        self.view.ask('Hora(24hrs): ')
+        a_hour = input()
+        whole_vals = [id_contact, a_affair, a_place, a_date, a_hour]
         fields, vals = self.update_lists(['id_contact', 'a_affair', 'a_place', 'a_date', 'a_hour'], whole_vals)
         vals.append(id_appointment)
         vals = tuple(vals)
